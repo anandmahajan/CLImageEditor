@@ -128,7 +128,7 @@
 - (void)initMenuScrollView
 {
     if(self.menuView==nil){
-        UIScrollView *menuScroll = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 80)];
+        UIScrollView *menuScroll = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 110)];
         menuScroll.top = self.view.height - menuScroll.height;
         menuScroll.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
         menuScroll.showsHorizontalScrollIndicator = NO;
@@ -189,7 +189,7 @@
 {
     [super viewDidLoad];
     
-    self.title = self.toolInfo.title;
+    self.title = @"Filters";//self.toolInfo.title;
     self.view.clipsToBounds = YES;
     self.view.backgroundColor = self.theme.backgroundColor;
     self.navigationController.view.backgroundColor = self.view.backgroundColor;
@@ -411,6 +411,16 @@
 
 - (void)setMenuView
 {
+    CLImageToolInfo *tool = [self.toolInfo.sortedSubtools objectAtIndex:0];//[self.toolInfo
+    
+    double delayInSeconds = 0.5f;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        [self setupToolWithToolInfo:tool];
+    });
+    return;
+
+    
     CGFloat x = 0;
     CGFloat W = 70;
     CGFloat H = _menuView.height;
@@ -514,7 +524,7 @@
         _currentTool = currentTool;
         [_currentTool setup];
         
-        [self swapToolBarWithEditting:(_currentTool!=nil)];
+        //[self swapToolBarWithEditting:(_currentTool!=nil)];
     }
 }
 
@@ -572,8 +582,12 @@
     
     if(self.currentTool){
         UINavigationItem *item  = [[UINavigationItem alloc] initWithTitle:self.currentTool.toolInfo.title];
-        item.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[CLImageEditorTheme localizedString:@"CLImageEditor_OKBtnTitle" withDefault:@"OK"] style:UIBarButtonItemStyleDone target:self action:@selector(pushedDoneBtn:)];
+        /*item.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[CLImageEditorTheme localizedString:@"CLImageEditor_OKBtnTitle" withDefault:@"OK"] style:UIBarButtonItemStyleDone target:self action:@selector(pushedDoneBtn:)];
         item.leftBarButtonItem  = [[UIBarButtonItem alloc] initWithTitle:[CLImageEditorTheme localizedString:@"CLImageEditor_BackBtnTitle" withDefault:@"Back"] style:UIBarButtonItemStylePlain target:self action:@selector(pushedCancelBtn:)];
+        */
+        item.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[CLImageEditorTheme localizedString:@"CLImageEditor_DoneBtnTitle" withDefault:@"Done"] style:UIBarButtonItemStyleDone target:self action:@selector(pushedDoneBtn:)];
+        item.leftBarButtonItem  = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"/*[CLImageEditorTheme localizedString:@"CLImageEditor_BackBtnTitle" withDefault:@"Back"]*/ style:UIBarButtonItemStylePlain target:self action:@selector(pushedCancelBtn:)];
+
         
         [_navigationBar pushNavigationItem:item animated:(self.navigationController==nil)];
     }
@@ -617,6 +631,7 @@
     [self resetImageViewFrame];
     
     self.currentTool = nil;
+    [self pushedCloseBtn:nil];
 }
 
 - (IBAction)pushedDoneBtn:(id)sender
@@ -634,6 +649,8 @@
             
             [self resetImageViewFrame];
             self.currentTool = nil;
+            
+            [self pushedFinishBtn:nil];
         }
         self.view.userInteractionEnabled = YES;
     }];

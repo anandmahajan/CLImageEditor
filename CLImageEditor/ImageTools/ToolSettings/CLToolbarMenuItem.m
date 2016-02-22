@@ -30,7 +30,7 @@
         _titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, _iconView.bottom + 5, W, 15)];
         _titleLabel.backgroundColor = [UIColor clearColor];
         _titleLabel.textColor = [CLImageEditorTheme toolbarTextColor];
-        _titleLabel.font = [CLImageEditorTheme toolbarTextFont];
+        _titleLabel.font = [UIFont systemFontOfSize:12.0f];//[CLImageEditorTheme toolbarTextFont];
         _titleLabel.textAlignment = NSTextAlignmentCenter;
         [self addSubview:_titleLabel];
     }
